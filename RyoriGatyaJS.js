@@ -8,10 +8,12 @@ TAB_DATA_I,
 TAB_ZAIRYO_SENTAKU
 ];
 
-var g_ZairyoList = [];
+var g_RyoriAndZairyo;
+
 var g_ZairyoCategoryList = [];
 var Cr_ZairyoCategory = "";
 var Cr_ZairyoMei = "";
+var DataImportFlg = false;
 
 var g_SyuyouZairyo1 = "";
 var g_SyuyouZairyo2 = "";
@@ -19,7 +21,6 @@ var g_SyuyouZairyo3 = "";
 var g_SyuyouZairyoTuikaNumber = "";
 
 InitTab();
-Test1();
 Init();
 
 function InitTab(){
@@ -28,8 +29,6 @@ function InitTab(){
 }
 
 function Init(){
-	Cr_ZairyoCategory = g_ZairyoList[0].category;
-	Cr_ZairyoMei = "";
 }
 
 function ChangeTab(){
@@ -85,6 +84,14 @@ function ZairyoTuikaOnRyoriTyusyutuTab(value){
 function DisplayRyoriTyusyutuTab(){
 }
 function DisplayDataImportTab(){
+	var spanElem;
+	
+	spanElem = document.getElementById("ImportDataFlgOnDataImportTab");
+	if(DataImportFlg == true){
+		spanElem.innerHTML = "材料-料理データ：インポート済み"
+	}else{
+		spanElem.innerHTML = "材料-料理データ：インポート未完了"
+	}
 }
 function DisplayZairyoSeitakuTab(){
 	var spanElem;
@@ -195,8 +202,8 @@ function GetZairyoList(category){
 	var zairyo;
 	var resultList = [];
 	
-	for(var i=0; i<g_ZairyoList.length; i++){
-		zairyo = g_ZairyoList[i];
+	for(var i=0; i<g_RyoriAndZairyo.zairyoList.length; i++){
+		zairyo = g_RyoriAndZairyo.zairyoList[i];
 		if(zairyo.category == category){
 			resultList.push(zairyo);
 		}else if(zairyo.subcategory == category){
@@ -270,6 +277,79 @@ function AddZairyoCategory(category){
 	if(newFlg == true){
 		g_ZairyoCategoryList.push(category);
 	}
+}
+function ImportDataOnDataImportTab(){
+      var fileRef = document.getElementById('fileOnDataImportTab');
+	  var content;
+	  var category1;
+	  var subcategory1;
+	  
+      if (1 <= fileRef.files.length) {
+			var reader = new FileReader();
+			//ファイル読み出し完了後の処理を記述
+			reader.onload = function (theFile) {
+			var content = theFile.target.result;
+			g_RyoriAndZairyo = JSON.parse(content);
+			for(var i=0; i<g_RyoriAndZairyo.zairyoList.length; i++){
+				category1 =  g_RyoriAndZairyo.zairyoList[i].category;
+				subcategory1 = g_RyoriAndZairyo.zairyoList[i].subcategory;
+				
+				if(!g_ZairyoCategoryList.includes(category1)){
+					g_ZairyoCategoryList.push(category1);
+				}
+				
+				if(subcategory1 != "" && !g_ZairyoCategoryList.includes(subcategory1)){
+					g_ZairyoCategoryList.push(subcategory1);
+				}
+			}
+			Cr_ZairyoCategory = g_ZairyoCategoryList[0];
+			DataImportFlg = true;
+			DisplayDataImportTab();
+        }
+
+		//ファイル読み出し
+        reader.readAsText(fileRef.files[0], "utf-8");
+
+      }
+}
+
+var g_reader = new FileReader();
+var g_File;
+var fileElem = document.getElementById("fileOnDataImportExportTab");
+fileElem.onchange = function(event) {
+    g_File = event.target.files[0];
+};
+
+function SearchRyori(searchZairyoList, keyword){
+	var useFlg;
+	var resultList = [];
+	var ryori, zairyoList1;
+	var useZairyo;
+	
+loop1: for(var i=0; i<g_ZairyoCategoryList.ryoriList.length; i++){
+		ryori = g_RyoriList[i];
+		zairyoList1 = ryori.zairyoMeiList;
+loop2:	for(var j=0; j<searchZairyoList.length; j++){
+			useFlg = false;
+			for(var k=0; k<zairyoList1.length; k++){
+				if(zairyoList1[k] == searchZairyoList[j]){
+					useFlg = true;
+					break;
+				}
+			}
+			if(useFlg == false){
+				continue loop1;
+			}
+		}
+		if(keyword == "" || ryori.bikou.indexOf(keyword) != -1){
+			resultList.push(ryori);
+		}
+	}
+	
+	return resultList;
+}
+
+function RyoriTyusyutuOnRyoriTyusyutuTab(){
 }
 
 //材料のコンストラクタ
