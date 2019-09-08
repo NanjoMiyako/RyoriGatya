@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=yes">
+<title>料理ガチャ</title>
+<link rel="stylesheet" href="style2.css">
+</head>
+<body>
+<script src="jquery-3.3.1.min.js"></script>
+
+
+<form id="form1" name="form1">
+<select name="tabPages" style="font-size:20px; border:1px solid;">
+	<option value="tab_RyoriTyusyutu">ランダム料理抽出</option>
+	<option value="tab_DataImport">データインポート</option>
+</select>
+<button type="button" id="selectTabPage1", style="margin-left:10px;" onclick="ChangeTab()">タブを選択</button>
+</form>
+
+<!-- ランダム料理抽出 -->
+<div id="tab_RyoriTyusyutu" class="tab">
+<form id="SearchForm">
+ランダム料理抽出<br>
+主要材料1:
+<input type:"text" id="Zairyo1OnRyoriTyusyutuTab" style="margin-left:10px;">
+<button type="button" id="Zairyo1TuikaBtnOnRyoriTyusyutuTab" onclick="ZairyoTuikaOnRyoriTyusyutuTab(1)">
+材料追加
+</button>
+<br>
+主要材料2:
+<input type:"text" id="Zairyo2OnRyoriTyusyutuTab" style="margin-left:10px;">
+<button type="button" id="Zairyo2TuikaBtnOnRyoriTyusyutuTab" onclick="ZairyoTuikaOnRyoriTyusyutuTab(2)">
+材料追加
+</button>
+<br>
+主要材料3:
+<input type:"text" id="Zairyo3OnRyoriTyusyutuTab" style="margin-left:10px;">
+<button type="button" id="Zairyo3TuikaBtnOnRyoriTyusyutuTab" onclick="ZairyoTuikaOnRyoriTyusyutuTab(3)">
+材料追加
+</button>
+<br>
+キーワード:
+<input type:"text" id="KeyWordOnRyoriTyusyutuTab" style="margin-left:10px;"><br>
+
+<button type="button" id="TyusyutuBtnOnRyoriTyusyutuTab" value="3" onclick="RyoriTyusyutuOnRyoriTyusyutuTab()">
+ランダム料理決定
+</button>
+
+</form>
+</div>
+
+<div id="tab_DataImport" class="tab">
+データインポート
+</div>
+
+<div id="tab_ZairyoSentaku" class="tab">
+材料選択
+<div id="categoryTab1"></div><br>
+<div id="zairyoTab1"></div><br>
+<button type="button" id="SentakuOnZairyoSentakuTab" style="width:100px; height:50px;" onclick="ZairyoSentaku()">
+選択
+</button>
+</div>
+
+
+<script type="text/javascript" src="RyoriGatyaJS.js">
+</script>
+
+
+</body>
+</html>
