@@ -18,6 +18,8 @@ var DataImportFlg = false;
 var g_SyuyouZairyo1 = "";
 var g_SyuyouZairyo2 = "";
 var g_SyuyouZairyo3 = "";
+var g_SyuyouZairyo4 = "";
+var g_SyuyouZairyo5 = "";
 var g_SyuyouZairyoTuikaNumber = "";
 
 InitTab();
@@ -75,6 +77,10 @@ function ZairyoTuikaOnRyoriTyusyutuTab(value){
 		g_SyuyouZairyoTuikaNumber = 2;
 	}else if(value == 3){
 		g_SyuyouZairyoTuikaNumber = 3;
+	}else if(value == 4){
+		g_SyuyouZairyoTuikaNumber = 4;
+	}else if(value == 5){
+		g_SyuyouZairyoTuikaNumber = 5;
 	}
 	
 	HiddenAllTab();
@@ -147,10 +153,17 @@ function DisplayZairyoSeitakuTab(){
 	//材料名のDivをクリア
 	while(divElem.firstChild != null){ divElem.removeChild(divElem.firstChild); }
 	var zairyoList = GetZairyoList(Cr_ZairyoCategory);
-	for(var j=0; j<zairyoList.length; j++){
+
+	var zairyoMeiList = [];
+	for(var k=0; k<zairyoList.length; k++){
+		zairyoMeiList.push(zairyoList[k].zairyoMei);
+	}
+	zairyoMeiList.sort();
+	
+	for(var j=0; j<zairyoMeiList.length; j++){
 		spanElem = document.createElement("span");
 		spanElem.innerHTML = "　";
-		spanElem.innerHTML += zairyoList[j].zairyoMei;
+		spanElem.innerHTML += zairyoMeiList[j];
 		spanElem.innerHTML += "　";
 		if(zairyoList[j].zairyoMei == Cr_ZairyoMei){
 			spanElem.style.border = "thick solid rgb(255, 0, 0)";
@@ -161,7 +174,7 @@ function DisplayZairyoSeitakuTab(){
 		}
 		spanElem.style.fontWeight = "bold";
 		spanElem.style.margin = "20px 5px";
-		spanElem.value = zairyoList[j].zairyoMei;
+		spanElem.value = zairyoMeiList[j];
 		spanElem.onclick = function(){
 			Cr_ZairyoMei = this.value;
 			DisplayZairyoSeitakuTab();
@@ -190,6 +203,10 @@ function ZairyoSentaku(){
 		textElem = document.getElementById("Zairyo2OnRyoriTyusyutuTab");
 	}else if(g_SyuyouZairyoTuikaNumber == 3){
 		textElem = document.getElementById("Zairyo3OnRyoriTyusyutuTab");
+	}else if(g_SyuyouZairyoTuikaNumber == 4){
+		textElem = document.getElementById("Zairyo4OnRyoriTyusyutuTab");
+	}else if(g_SyuyouZairyoTuikaNumber == 5){
+		textElem = document.getElementById("Zairyo5OnRyoriTyusyutuTab");
 	}
 	textElem.value = Cr_ZairyoMei;
 	
@@ -202,8 +219,8 @@ function GetZairyoList(category){
 	var zairyo;
 	var resultList = [];
 	
-	for(var i=0; i<g_RyoriAndZairyo.zairyoList.length; i++){
-		zairyo = g_RyoriAndZairyo.zairyoList[i];
+	for(var i=0; i<g_RyoriAndZairyo.zairyoMeiList.length; i++){
+		zairyo = g_RyoriAndZairyo.zairyoMeiList[i];
 		if(zairyo.category == category){
 			resultList.push(zairyo);
 		}else if(zairyo.subcategory == category){
@@ -290,9 +307,9 @@ function ImportDataOnDataImportTab(){
 			reader.onload = function (theFile) {
 			var content = theFile.target.result;
 			g_RyoriAndZairyo = JSON.parse(content);
-			for(var i=0; i<g_RyoriAndZairyo.zairyoList.length; i++){
-				category1 =  g_RyoriAndZairyo.zairyoList[i].category;
-				subcategory1 = g_RyoriAndZairyo.zairyoList[i].subcategory;
+			for(var i=0; i<g_RyoriAndZairyo.zairyoMeiList.length; i++){
+				category1 =  g_RyoriAndZairyo.zairyoMeiList[i].category;
+				subcategory1 = g_RyoriAndZairyo.zairyoMeiList[i].subcategory;
 				
 				if(!g_ZairyoCategoryList.includes(category1)){
 					g_ZairyoCategoryList.push(category1);
@@ -326,9 +343,10 @@ function SearchRyori(searchZairyoList, keyword){
 	var ryori, zairyoList1;
 	var useZairyo;
 	
-loop1: for(var i=0; i<g_ZairyoCategoryList.ryoriList.length; i++){
-		ryori = g_RyoriList[i];
-		zairyoList1 = ryori.zairyoMeiList;
+loop1: for(var i=0; i<g_RyoriAndZairyo.ryoriList.length; i++){
+		ryori = g_RyoriAndZairyo.ryoriList[i];
+		
+		zairyoList1 = ryori.zairyoList;
 loop2:	for(var j=0; j<searchZairyoList.length; j++){
 			useFlg = false;
 			for(var k=0; k<zairyoList1.length; k++){
@@ -350,7 +368,112 @@ loop2:	for(var j=0; j<searchZairyoList.length; j++){
 }
 
 function RyoriTyusyutuOnRyoriTyusyutuTab(){
+	var zairyoList = [];
+	var keyword;
+	var zairyo;
+	var ryoriList1;
+	
+	textElem = document.getElementById("KeyWordOnRyoriTyusyutuTab");
+	keyword = textElem.value;
+	
+	textElem = document.getElementById("Zairyo1OnRyoriTyusyutuTab");
+	zairyo = textElem.value;
+	if(zairyo != ""){
+		zairyoList.push(zairyo);
+	}
+
+	textElem = document.getElementById("Zairyo2OnRyoriTyusyutuTab");
+	zairyo = textElem.value;
+	if(zairyo != ""){
+		zairyoList.push(zairyo);
+	}
+	
+	textElem = document.getElementById("Zairyo3OnRyoriTyusyutuTab");
+	zairyo = textElem.value;
+	if(zairyo != ""){
+		zairyoList.push(zairyo);
+	}
+	
+	textElem = document.getElementById("Zairyo4OnRyoriTyusyutuTab");
+	zairyo = textElem.value;
+	if(zairyo != ""){
+		zairyoList.push(zairyo);
+	}
+
+	textElem = document.getElementById("Zairyo5OnRyoriTyusyutuTab");
+	zairyo = textElem.value;
+	if(zairyo != ""){
+		zairyoList.push(zairyo);
+	}
+
+	ryoriList = SearchRyori(zairyoList, keyword);
+	// 0~ryoriList.length;
+	var random1 = Math.floor(Math.random() * ryoriList.length);
+	DisplayRyoriDiv(ryoriList[random1]);
 }
+function DisplayRyoriDiv(ryori){
+	var divElem;
+	var spanElem;
+	var brElem;
+	var hrefElem;
+	
+	
+	divElem = document.getElementById("RyoriDivOnTyusyutuBtnOnRyoriTyusyutuTab");
+	//カテゴリーのDivをクリア
+	while(divElem.firstChild != null){ divElem.removeChild(divElem.firstChild); }
+	
+	spanElem = document.createElement("span");
+	spanElem.innerHTML = "料理名:";
+	spanElem.innerHTML += ryori.ryoriMei;
+	divElem.appendChild(spanElem);
+	
+	brElem = document.createElement("br");
+	divElem.appendChild(brElem);
+	
+	spanElem = document.createElement("span");
+	spanElem.innerHTML = "主要材料:";
+	for(var i=0; i<ryori.zairyoList.length; i++){
+		if(i != 0){
+			spanElem.innerHTML += ",　";
+		}
+		spanElem.innerHTML += ryori.zairyoList[i];
+	}
+	divElem.appendChild(spanElem);
+	
+	brElem = document.createElement("br");
+	divElem.appendChild(brElem);
+	
+	spanElem = document.createElement("span");
+	spanElem.innerHTML = "レシピURL:";
+	divElem.appendChild(spanElem);
+	
+	hrefElem = document.createElement("a");
+	hrefElem.href = ryori.recipeURL;
+	hrefElem.innerHTML = ryori.recipeURL;
+	hrefElem.target = "_blank";
+	divElem.appendChild(hrefElem);
+	
+	brElem = document.createElement("br");
+	divElem.appendChild(brElem);
+	
+	spanElem = document.createElement("span");
+	spanElem.innerHTML = "所要時間:";
+	spanElem.innerHTML += ryori.syoyouJikan;
+	spanElem.innerHTML += "分";
+	divElem.appendChild(spanElem);
+	
+	brElem = document.createElement("br");
+	divElem.appendChild(brElem);
+	
+	spanElem = document.createElement("span");
+	spanElem.innerHTML = "備考:";
+	spanElem.innerHTML += ryori.bikou;
+	divElem.appendChild(spanElem);
+	
+	brElem = document.createElement("br");
+	divElem.appendChild(brElem);
+}
+
 
 //材料のコンストラクタ
 function Zairyo(category, zairyoMei, subcategory){
