@@ -165,7 +165,7 @@ function DisplayZairyoSeitakuTab(){
 		spanElem.innerHTML = "　";
 		spanElem.innerHTML += zairyoMeiList[j];
 		spanElem.innerHTML += "　";
-		if(zairyoList[j].zairyoMei == Cr_ZairyoMei){
+		if(zairyoMeiList[j] == Cr_ZairyoMei){
 			spanElem.style.border = "thick solid rgb(255, 0, 0)";
 			spanElem.style.color = "red";
 		}else{
@@ -407,6 +407,10 @@ function RyoriTyusyutuOnRyoriTyusyutuTab(){
 	}
 
 	ryoriList = SearchRyori(zairyoList, keyword);
+	
+	var spanElem = document.getElementById("HitCountOnRyoriTyusyutuTab");
+	spanElem.innerHTML = ryoriList.length;
+	
 	// 0~ryoriList.length;
 	var random1 = Math.floor(Math.random() * ryoriList.length);
 	DisplayRyoriDiv(ryoriList[random1]);
